@@ -9,11 +9,12 @@ import (
 const (
 	validNrn           = "85021100113"
 	validNrnWithSpaces = "850211 001 13"
+	validFormattedNrn  = "85.02.11-001.13"
 	invalidLengthNrn   = "85021100113019"
 )
 
 func Test_GetBirthDateRFC3339_Success(t *testing.T) {
-	validNrns := []string{validNrn, validNrnWithSpaces}
+	validNrns := []string{validNrn, validNrnWithSpaces, validFormattedNrn}
 	for _, nrn := range validNrns {
 		t.Run("With_Valid_NRN_"+nrn, func(t *testing.T) {
 			dateOfBirth, err := GetBirthDateRFC3339(nrn)
@@ -30,7 +31,7 @@ func Test_GetBirthDateRFC3339_Failure(t *testing.T) {
 }
 
 func Test_GetAge_Success(t *testing.T) {
-	validNrns := []string{validNrn, validNrnWithSpaces}
+	validNrns := []string{validNrn, validNrnWithSpaces, validFormattedNrn}
 	for _, nrn := range validNrns {
 		t.Run("With_Valid_NRN_"+nrn, func(t *testing.T) {
 			age, err := GetAge(nrn)
