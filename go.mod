@@ -2,7 +2,10 @@ module github.com/amrfaissal/go-be-nrn
 
 go 1.18
 
-require github.com/stretchr/testify v1.8.0
+require (
+	github.com/bearbin/go-age v0.0.0-20210220235509-f0fa00c278ce
+	github.com/stretchr/testify v1.8.0
+)
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect

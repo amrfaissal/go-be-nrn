@@ -28,3 +28,20 @@ func Test_GetBirthDateRFC3339_Failure(t *testing.T) {
 	assert.Empty(t, dateOfBirth)
 	assert.ErrorContains(t, err, ErrInvalidNrnLength.Error())
 }
+
+func Test_GetAge_Success(t *testing.T) {
+	validNrns := []string{validNrn, validNrnWithSpaces}
+	for _, nrn := range validNrns {
+		t.Run("With_Valid_NRN_"+nrn, func(t *testing.T) {
+			age, err := GetAge(nrn)
+			assert.Nil(t, err)
+			assert.Equal(t, age, 37)
+		})
+	}
+}
+
+func Test_GetAge_Failure(t *testing.T) {
+	age, err := GetAge(invalidLengthNrn)
+	assert.Zero(t, age)
+	assert.ErrorContains(t, err, ErrInvalidNrnLength.Error())
+}
