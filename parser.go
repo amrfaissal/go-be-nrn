@@ -18,7 +18,7 @@ var (
 
 const (
 	validNrnLength                 = 11
-	simpleDateFormat               = "2006-02-01"
+	simpleDateFormat               = "2006-01-02"
 	bisMonthIncrementGenderUnknown = 20
 )
 

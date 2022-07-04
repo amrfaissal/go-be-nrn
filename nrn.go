@@ -1,10 +1,6 @@
 package gobenrn
 
-import (
-	"time"
-
-	age "github.com/bearbin/go-age"
-)
+import age "github.com/bearbin/go-age"
 
 // GetAge returns person's age from the NRN (National Registry Number).
 func GetAge(nrn string) (int, error) {
@@ -21,8 +17,8 @@ func GetAge(nrn string) (int, error) {
 	return age.Age(*birthDate), nil
 }
 
-// GetBirthDateRFC3339 returns the date of birth from the NRN (National Registry Number) in RFC3339 time format.
-func GetBirthDateRFC3339(nrn string) (string, error) {
+// GetBirthDate returns the date of birth from the NRN (National Registry Number) in the specified time format.
+func GetBirthDate(nrn, format string) (string, error) {
 	parsedNrn, err := parseNrn(nrn)
 	if err != nil {
 		return "", err
@@ -33,5 +29,8 @@ func GetBirthDateRFC3339(nrn string) (string, error) {
 		return "", err
 	}
 
-	return birthDate.Format(time.RFC3339), nil
+	if format == "" {
+		format = simpleDateFormat
+	}
+	return birthDate.Format(format), nil
 }

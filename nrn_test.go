@@ -2,6 +2,7 @@ package gobenrn
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -17,15 +18,19 @@ func Test_GetBirthDateRFC3339_Success(t *testing.T) {
 	validNrns := []string{validNrn, validNrnWithSpaces, validFormattedNrn}
 	for _, nrn := range validNrns {
 		t.Run("With_Valid_NRN_"+nrn, func(t *testing.T) {
-			dateOfBirth, err := GetBirthDateRFC3339(nrn)
+			dateOfBirth, err := GetBirthDate(nrn, time.RFC3339)
 			assert.Nil(t, err)
 			assert.Equal(t, dateOfBirth, "1985-02-11T00:00:00Z")
+
+			dateOfBirth, err = GetBirthDate(nrn, simpleDateFormat)
+			assert.Nil(t, err)
+			assert.Equal(t, dateOfBirth, "1985-02-11")
 		})
 	}
 }
 
 func Test_GetBirthDateRFC3339_Failure(t *testing.T) {
-	dateOfBirth, err := GetBirthDateRFC3339(invalidLengthNrn)
+	dateOfBirth, err := GetBirthDate(invalidLengthNrn, simpleDateFormat)
 	assert.Empty(t, dateOfBirth)
 	assert.ErrorContains(t, err, ErrInvalidNrnLength.Error())
 }
