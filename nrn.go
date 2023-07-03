@@ -39,7 +39,7 @@ func GetAge(nrn string) (int, error) {
 	return age.Age(*birthDate), nil
 }
 
-// IsMale returns whether the holder of the NRN is a male
+// IsMale checks if the NRN holder is a Male.
 func IsMale(nrn string) (bool, error) {
 	parsedNrn, err := parseNrn(nrn)
 	if err != nil {
@@ -50,7 +50,7 @@ func IsMale(nrn string) (bool, error) {
 	return serial%2 != 0, nil
 }
 
-// IsFemale returns wheter the holder of the NRN is a female
+// IsFemale checks if the NRN holder is a Female.
 func IsFemale(nrn string) (bool, error) {
 	parsedNrn, err := parseNrn(nrn)
 	if err != nil {
@@ -59,4 +59,16 @@ func IsFemale(nrn string) (bool, error) {
 
 	serial, _ := strconv.Atoi(parsedNrn.Serial)
 	return serial%2 == 0, nil
+}
+
+// IsBirthDateKnown checks if the NRN holder's birth date is known.
+func IsBirthDateKnown(nrn string) (bool, error) {
+	parsedNrn, err := parseNrn(nrn)
+	if err != nil {
+		return false, err
+	}
+
+	month, _ := parsedNrn.getBirthMonth()
+	day, _ := parsedNrn.getBirthDay()
+	return month != 0 && day != 0, nil
 }

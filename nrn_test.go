@@ -14,6 +14,7 @@ const (
 	validFormattedNrn       = "85.02.11-001.13"
 	validFormattedFemaleNrn = "86.02.15-002.10"
 	invalidLengthNrn        = "85021100113019"
+	unknownBirthDateNrn     = "009000 002 00"
 )
 
 func Test_GetBirthDateRFC3339_Success(t *testing.T) {
@@ -83,4 +84,21 @@ func Test_IsFemale_Failure(t *testing.T) {
 	female, err := IsFemale(input)
 	assert.Nil(t, err)
 	assert.False(t, female)
+}
+
+func Test_IsBirthDateKnown_Success(t *testing.T) {
+	validNrns := []string{validNrn, validNrnWithSpaces, validFormattedNrn}
+	for _, nrn := range validNrns {
+		t.Run("With_Valid_NRN_"+nrn, func(t *testing.T) {
+			known, err := IsBirthDateKnown(nrn)
+			assert.Nil(t, err)
+			assert.True(t, known)
+		})
+	}
+}
+
+func Test_IsBirthDateKnown_Failure(t *testing.T) {
+	known, err := IsBirthDateKnown(unknownBirthDateNrn)
+	assert.Nil(t, err)
+	assert.False(t, known)
 }
