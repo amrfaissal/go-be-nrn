@@ -1,6 +1,7 @@
 package gobenrn
 
 import (
+	"math/bits"
 	"strings"
 	"testing"
 	"time"
@@ -17,8 +18,9 @@ const (
 	unknownBirthDateNrn     = "009000 002 00"
 )
 
+var validNrns = []string{validNrn, validNrnWithSpaces, validFormattedNrn}
+
 func Test_GetBirthDateRFC3339_Success(t *testing.T) {
-	validNrns := []string{validNrn, validNrnWithSpaces, validFormattedNrn}
 	for _, nrn := range validNrns {
 		t.Run("With_Valid_NRN_"+nrn, func(t *testing.T) {
 			dateOfBirth, err := GetBirthDate(nrn, time.RFC3339)
@@ -39,7 +41,6 @@ func Test_GetBirthDateRFC3339_Failure(t *testing.T) {
 }
 
 func Test_GetAge_Success(t *testing.T) {
-	validNrns := []string{validNrn, validNrnWithSpaces, validFormattedNrn}
 	for _, nrn := range validNrns {
 		t.Run("With_Valid_NRN_"+nrn, func(t *testing.T) {
 			age, err := GetAge(nrn)
@@ -56,7 +57,6 @@ func Test_GetAge_Failure(t *testing.T) {
 }
 
 func Test_IsMale_Success(t *testing.T) {
-	validNrns := []string{validNrn, validNrnWithSpaces, validFormattedNrn}
 	for _, nrn := range validNrns {
 		t.Run("With_Valid_NRN_"+nrn, func(t *testing.T) {
 			male, err := IsMale(nrn)
@@ -87,7 +87,6 @@ func Test_IsFemale_Failure(t *testing.T) {
 }
 
 func Test_IsBirthDateKnown_Success(t *testing.T) {
-	validNrns := []string{validNrn, validNrnWithSpaces, validFormattedNrn}
 	for _, nrn := range validNrns {
 		t.Run("With_Valid_NRN_"+nrn, func(t *testing.T) {
 			known, err := IsBirthDateKnown(nrn)
@@ -101,4 +100,47 @@ func Test_IsBirthDateKnown_Failure(t *testing.T) {
 	known, err := IsBirthDateKnown(unknownBirthDateNrn)
 	assert.Nil(t, err)
 	assert.False(t, known)
+}
+
+func Test_Equal_Success(t *testing.T) {
+	combine := func(set []string, n int) (subsets [][]string) {
+		length := uint(len(set))
+		if n > len(set) {
+			n = len(set)
+		}
+
+		for subsetBits := 1; subsetBits < (1 << length); subsetBits++ {
+			if n > 0 && bits.OnesCount(uint(subsetBits)) != n {
+				continue
+			}
+
+			var subset []string
+			for object := uint(0); object < length; object++ {
+				if (subsetBits>>object)&1 == 1 {
+					subset = append(subset, set[object])
+				}
+			}
+			subsets = append(subsets, subset)
+		}
+		return subsets
+	}
+
+	for _, combination := range combine(validNrns, 2) {
+		nrn1, nrn2 := combination[0], combination[1]
+		t.Run("With_"+nrn1+"_And_"+nrn2, func(t *testing.T) {
+			areEqual, err := Equal(nrn1, nrn2)
+			assert.Nil(t, err)
+			assert.True(t, areEqual)
+		})
+	}
+}
+
+func Test_Equal_Failure(t *testing.T) {
+	areEqual, err := Equal(validNrn, invalidLengthNrn)
+	assert.False(t, areEqual)
+	assert.ErrorContains(t, err, ErrInvalidNrnLength.Error())
+
+	areEqual, err = Equal(validNrn, validFormattedFemaleNrn)
+	assert.Nil(t, err)
+	assert.False(t, areEqual)
 }

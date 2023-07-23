@@ -1,6 +1,7 @@
 package gobenrn
 
 import (
+	"reflect"
 	"strconv"
 
 	age "github.com/bearbin/go-age"
@@ -71,4 +72,19 @@ func IsBirthDateKnown(nrn string) (bool, error) {
 	month, _ := parsedNrn.getBirthMonth()
 	day, _ := parsedNrn.getBirthDay()
 	return month != 0 && day != 0, nil
+}
+
+// Equal checks if two differently formatted NRNs are the same.
+func Equal(nrn1, nrn2 string) (bool, error) {
+	parsedNrn1, err := parseNrn(nrn1)
+	if err != nil {
+		return false, err
+	}
+
+	parsedNrn2, err := parseNrn(nrn2)
+	if err != nil {
+		return false, err
+	}
+
+	return reflect.DeepEqual(parsedNrn1, parsedNrn2), nil
 }
